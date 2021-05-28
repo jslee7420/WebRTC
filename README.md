@@ -156,6 +156,47 @@ peerConnection.addEventListener("connectionstatechange", (event) => {
 });
 ```
 
+# Remote streams
+
+We can connect the stream to `RTCPeerConnection`. A media stream consists of at least one media track, and these are individually added to the `RTCPeerConnection` when we want to transmit the media to the remote peer. Tracks can be added to `RTCPeerConnection` before it has connected to a remote peer. Perform this setup as early as possible instead of waiting for the connection to be completed.
+
+```javascript
+const localStream = await getUserMedia({ video: true, audio: true });
+const peerConnection = new RTCPeerConnection(iceConfig);
+localStream.getTracks().forEach((track) => {
+  peerConnection.addTrack(track, localStream);
+});
+```
+
+## Adding remote tracks
+
+We register a listener on the local `RTCPeerConnection` listening for the `track` event. Since playback is done on a `MediaStream` object, we first create an empty instance that we then populate with the tracks from the remote peer as we receive them.
+
+```javascript
+const remoteStream = MediaStream();
+const remoteVideo = document.querySelector("#remoteVideo");
+remoteVideo.srcObject = remoteStream;
+peerConnection.addEventListener("track", async (event) => {
+  remoteStream.addTrack(event.track, remoteStream);
+});
+```
+
+# TURN server
+
+For most WebRTC apps to function a server is required for relaying the traffic between peers, since a direct socket is often not possible between the clients. The common way to solve this is by using TURN server. There are currently several options for TURN servers available online, both as self-hosted apps and as cloud provided services. Once you have a TURN server available online, all you need is the correct `RTCConfiguration` for your client app to use it. The following code snippet illustrates a sample config for a `RTCPeerConnection`.
+
+```javascript
+const iceConfiguration = {
+  iceServers: [
+    {
+      urls: "turn:my-turn-server.mycompany.com:19403",
+      username: "optional-username",
+      credentials: "auth-token",
+    },
+  ],
+};
+```
+
 # References
 
 https://www.html5rocks.com/ko/tutorials/webrtc/basics/
