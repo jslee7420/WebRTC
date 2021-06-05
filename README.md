@@ -197,6 +197,28 @@ const iceConfiguration = {
 };
 ```
 
+# Signaling
+
+## What is signalling?
+
+Signaling is the process of coordinating communication.
+
+- Session-control messages used to open or close communication
+- Error messages
+- Media metadata, such as codecs, codec settings, bandwidth, and media types
+- Network data, such as host's IP address and port as seen by the outside world
+
+These mechanism is not implemented by the WebRTC APIs. You need to build it yourself. To avoid redundancy and to maximize compatibility with established technologies, signaling methods and protocols are not specified by WebRTC standards.This approach is outlined by the JavaScript Session Establishment Protocol (JSEP):
+
+## Build a signaling service with Socket.io on Node
+
+A message service for signaling needs to be bidirectional. WebSocket is the most natural solution. You can build signaling service with Socket.io on Node. The design of Socket.io makes it simple to build a service to exchange messages and Socket.io is particularly suited to WebRTC signaling because of its built-in concept of rooms.
+
+> Socket.IO is a library that enables real-time, bidirectional and event-based communication between the browser and the server. It consists of:
+>
+> - a Node.js server
+> - a Javascript client library for the browser (which can be also run from Node.js)
+
 # References
 
 https://www.html5rocks.com/ko/tutorials/webrtc/basics/
